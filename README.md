@@ -4,7 +4,7 @@
 
 ### Authors
 
-Hinrik Snær Guðmundsson
-Huy Van Nguyen
-Nu Phan Quynh Do
-Valentin Oliver Loftsson
+Hinrik Snær Guðmundsson  
+Huy Van Nguyen  
+Nu Phan Quynh Do  
+Valentin Oliver Loftsson  
