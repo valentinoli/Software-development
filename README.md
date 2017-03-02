@@ -4,6 +4,9 @@
 ## Spring 2017
 ## University of Iceland
 
+### About
+This is a simple demo of a meta-search engine
+
 ### Authors
 
 Hinrik Snær Guðmundsson  
