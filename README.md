@@ -1,6 +1,8 @@
-# Software-development
+# Meta-search Engine
 
-## Meta-search engine
+## Software-development course
+## Spring 2017
+## University of Iceland
 
 ### Authors
 
