@@ -1,16 +1,29 @@
 
+import java.util.Date;
+
 public class Hotel {
 	
+	/* Reminder: Make sure the following 
+	 * corresponds to the Hotel-team's implementation
+	 */	
+	
+	private int id;
 	private String name;
 	private String address;
-	private String phone;
+	/* Unsure about type of following instance variable */
+	// private Vector<Pair> freeRoomsPerDate;
 	private int price;
 	
-	public Hotel(String name, String address, String phone, int price) {
-		this.name = name;
-		this.address = address;
-		this.phone = phone;
-		this.price = price;
+	/* Missing constructor */
+	
+	/* Instance methods */
+	public int maxAvailableRooms(Date start, Date end) {
+		/* Missing implementation */
+		return -1;
+	}
+	
+	public int getId() {
+		return id;
 	}
 	
 	public String getName() {
@@ -19,10 +32,6 @@ public class Hotel {
 
 	public String getAddress() {
 		return address;
-	}
-
-	public String getPhone() {
-		return phone;
 	}
 
 	public int getPrice() {

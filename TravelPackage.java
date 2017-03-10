@@ -1,30 +1,22 @@
+import java.util.Vector;
 
 public class TravelPackage {
 	
-	private int id;
 	private int price;
 	private int travellers;
 	private Flight outbound;
 	private Flight inbound;
 	private Hotel hotel;
-	private DayTour[] daytour;
+	private Vector<DayTour> tours;
 	private Customer customer;
 	private Review review;
 	
-	public TravelPackage(Customer customer, int id) {
+	/* Constructor */
+	public TravelPackage(Customer customer) {
 		this.customer = customer;
-		this.id = id;
-	}
-	
-	public void bookPackage() {
-		/* Unfinished */
-		return;
-	}
-	
-	public int getId() {
-		return id;
 	}
 
+	/* Instance methods */
 	public int getPrice() {
 		return price;
 	}
@@ -45,8 +37,8 @@ public class TravelPackage {
 		return hotel;
 	}
 
-	public DayTour[] getDaytour() {
-		return daytour;
+	public Vector<DayTour> getDayTours() {
+		return tours;
 	}
 
 	public Customer getCustomer() {
@@ -55,6 +47,28 @@ public class TravelPackage {
 
 	public Review getReview() {
 		return review;
+	}
+	
+	public int calculatePrice() {
+		
+		price =  outbound.getPrice() + inbound.getPrice();
+		price += hotel.getPrice();
+		
+		for(int i = 0; i < tours.size(); i++) {
+			price += tours.get(i).getPrice();
+		}
+		
+		return price;		
+	}
+	
+	public void submitReview(int rating, String comment) {
+		if(rating < 0 || rating > 5) {
+			throw new IllegalArgumentException();
+		} else if(review != null) {
+			System.out.println("Review already exists");
+			return;
+		}
+		review = new Review(rating, comment);
 	}
 
 	public void setTravellers(int travellers) {
@@ -73,7 +87,21 @@ public class TravelPackage {
 		this.hotel = hotel;
 	}
 
-	public void setDaytour(DayTour[] daytour) {
-		this.daytour = daytour;
+	public void addDayTour(DayTour tour) {
+		if(tour != null) {
+			tours.add(tour);
+		}
+	}
+	
+	public void removeDayTour(DayTour tour) {
+		int index = tours.indexOf(tour);
+		if(index != -1) {
+			tours.remove(index);
+		}
+	}
+	
+	public void bookPackage() {
+		
+		/* Missing method implementation */		
 	}
 }
