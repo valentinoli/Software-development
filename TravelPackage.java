@@ -9,7 +9,6 @@ public class TravelPackage {
 	private Hotel hotel;
 	private Vector<DayTour> tours;
 	private Customer customer;
-	private Review review;
 	
 	/* Constructor */
 	public TravelPackage(Customer customer) {
@@ -44,10 +43,6 @@ public class TravelPackage {
 	public Customer getCustomer() {
 		return customer;
 	}
-
-	public Review getReview() {
-		return review;
-	}
 	
 	public int calculatePrice() {
 		
@@ -59,16 +54,6 @@ public class TravelPackage {
 		}
 		
 		return price;		
-	}
-	
-	public void submitReview(int rating, String comment) {
-		if(rating < 0 || rating > 5) {
-			throw new IllegalArgumentException();
-		} else if(review != null) {
-			System.out.println("Review already exists");
-			return;
-		}
-		review = new Review(rating, comment);
 	}
 
 	public void setTravellers(int travellers) {
@@ -100,8 +85,14 @@ public class TravelPackage {
 		}
 	}
 	
-	public void bookPackage() {
-		
-		/* Missing method implementation */		
-	}
+	/*
+	public void submitReview(int rating, String comment) {
+		if(rating < 0 || rating > 5) {
+			throw new IllegalArgumentException();
+		} else if(review != null) {
+			System.out.println("Review already exists");
+			return;
+		}
+		review = new Review(rating, comment);
+	}*/
 }
