@@ -1,32 +1,22 @@
 
-import java.io.Serializable;
-import java.util.Vector;
 import java.util.Date;
 
-public class PackageManager implements Serializable {
+public class PackageManager {
 	
-	private static final long serialVersionUID = 1L;
-	private Vector<TravelPackage> packages;
+	private TravelPackage packageInMaking;
 	
 	/* Default constructor */
 	
 	/* Instance methods */
-	public TravelPackage createNewPackage(Customer customer) {
-		
-		TravelPackage newPackage = new TravelPackage(customer);
-		this.packages.add(newPackage);		
-		return newPackage;
+	public void createNewPackage(Customer customer) {		
+		this.packageInMaking = new TravelPackage(customer);
 	}
 	
-	public void deletePackage(int index) {
-		
-		if(index < 0 || index >= packages.size()) {
-			throw new IndexOutOfBoundsException();
-		}
-		this.packages.remove(index);
+	public void bookPackage() {
+		/* missing implementation */
 	}
 	
-	public Flight[] searchFlights(Date departing, Date returning) {
+	public Flight[] searchFlights(Date departing, Date returning, String origin) {
 		
 		/* missing implementation */
 		return null;
