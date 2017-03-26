@@ -1,6 +1,8 @@
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 public class MainFrame {
 
@@ -34,8 +36,20 @@ public class MainFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 834, 524);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JMenuBar menuBar = new JMenuBar();
+		frame.setJMenuBar(menuBar);
+		
+		JMenuItem mntmInstruction = new JMenuItem("Instruction");
+		menuBar.add(mntmInstruction);
+		
+		JMenuItem mntmAbout = new JMenuItem("About");
+		menuBar.add(mntmAbout);
+		
+		JMenuItem mntmContact = new JMenuItem("Contact");
+		menuBar.add(mntmContact);
 	}
 
 }
