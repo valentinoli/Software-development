@@ -5,15 +5,19 @@ public class PackageManager {
 	
 	private TravelPackage packageInMaking;
 	
-	/* Default constructor */
-	
-	/* Instance methods */
-	public void createNewPackage(Customer customer) {		
-		this.packageInMaking = new TravelPackage(customer);
+	public PackageManager(TravelPackage newPackage) {
+		this.packageInMaking = newPackage;
 	}
 	
+	
 	public void bookPackage() {
-		/* missing implementation */
+		FlightReservationMock.book(packageInMaking.getInbound());
+		FlightReservationMock.book(packageInMaking.getOutbound());
+		HotelReservationMock.book(packageInMaking.getHotel());
+		for(DayTour tour : packageInMaking.getDayTours()) {
+			DayTourReservationMock.book(tour);
+		}
+		
 	}
 	
 	public Flight[] searchFlights(Date departing, Date returning, String origin) {
