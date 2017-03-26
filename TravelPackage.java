@@ -1,3 +1,4 @@
+package src;
 import java.util.Vector;
 
 public class TravelPackage {
@@ -8,12 +9,8 @@ public class TravelPackage {
 	private Flight inbound;
 	private Hotel hotel;
 	private Vector<DayTour> tours;
-	private Customer customer;
 	
-	/* Constructor */
-	public TravelPackage(Customer customer) {
-		this.customer = customer;
-	}
+	/* Default constructor */
 
 	/* Instance methods */
 	public int getPrice() {
@@ -39,11 +36,11 @@ public class TravelPackage {
 	public Vector<DayTour> getDayTours() {
 		return tours;
 	}
-
+/*
 	public Customer getCustomer() {
 		return customer;
 	}
-	
+	*/
 	public int calculatePrice() {
 		
 		price =  outbound.getPrice() + inbound.getPrice();
