@@ -45,11 +45,11 @@ public class PackageManagerTest {
 		Date departing;
 		try {
 			departing = format.parse("15/04/2017");
-			manager.searchOutboundFlights(departing, null);
+			manager.searchOutboundFlights(departing, "");
 		} catch (ParseException e) {
 			System.out.println("Parse exception");
 		}
-	}	
+	}
 	
 
 }
