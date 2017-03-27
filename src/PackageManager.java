@@ -23,13 +23,6 @@ public class PackageManager {
 	
 	public Flight[] searchOutboundFlights(Date departing, String origin) {
 		
-		FlightReservationMock.book(packageInMaking.getInbound());
-		FlightReservationMock.book(packageInMaking.getOutbound());
-		HotelReservationMock.book(packageInMaking.getHotel());
-		for(DayTour tour : packageInMaking.getDayTours()) {
-			DayTourReservationMock.book(tour);
-		}
-
 		//FlightSearch.search(departing, origin, "KEF");
 		return null;
 	}
