@@ -1,4 +1,5 @@
 package src;
 public class HotelReservationMock implements HotelReservation {
-	/* missing implementation */
+	
+	public void book(Hotel hotel) {}
 }

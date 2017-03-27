@@ -7,36 +7,40 @@ public class PackageManager {
 	
 	/* Default constructor */
 	
+	
 	public TravelPackage getPackage() {
 		return packageInMaking;
 	}	
 	
 	public void bookPackage() {
-
-		/*FlightReservationMock.book(packageInMaking.getInbound());
-		FlightReservationMock.book(packageInMaking.getOutbound());
-		HotelReservationMock.book(packageInMaking.getHotel());
+		FlightReservationMock flres = new FlightReservationMock();
+		HotelReservationMock htlres = new HotelReservationMock();
+		DayTourReservationMock dtrres = new DayTourReservationMock();
+		flres.book(packageInMaking.getInbound());
+		flres.book(packageInMaking.getOutbound());
+		htlres.book(packageInMaking.getHotel());
 		for(DayTour tour : packageInMaking.getDayTours()) {
-			DayTourReservationMock.book(tour);
-		}	*/	
+			dtrres.book(tour);
+		}
 	}
 	
 	public Flight[] searchOutboundFlights(Date departing, String origin) {
-		
-		//FlightSearch.search(departing, origin, "KEF");
+		FlightSearch flsearch = new FlightSearch();
+		flsearch.search(departing, origin, "KEF");
+		if(origin == "") throw new IllegalArgumentException("Origin is empty string");
+		else if(!origin.isValid()) throw new IllegalArgumentException("Origin is an invalid airport");
 		return null;
 	}
 	
 	public Flight[] searchInboundFlights(Date departing, String destination) {
-		
-		/* missing implementation */
-		//FlightSearch.search(departing, "KEF", destination);
+		FlightSearchMock flsearch = new FlightSearchMock();
+		flsearch.search(departing, "KEF", destination);
 		return null;
 	}
 	
 	public Hotel[] searchHotels(Date departing, Date returning) {
-		
-		/* missing implementation */
+		HotelSearchMock htlsearch = new HotelSearchMock();
+		// htl.search(departing, returning);
 		return null;
 	}
 	
