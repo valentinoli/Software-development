@@ -11,7 +11,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
-public class MainFrame extends javax.swing.JFrame{
+public class MainFrame extends javax.swing.JFrame {
 	/**
      * Creates new form MainFrame
      */
@@ -23,8 +23,7 @@ public class MainFrame extends javax.swing.JFrame{
     public MainFrame() {
         initComponents();
         adjustFrame();
-        calendar();
-       
+        calendar();       
     }
     
     private void adjustFrame(){
