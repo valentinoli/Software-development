@@ -18,8 +18,6 @@ public class PackageManagerTest {
 	
 	@Before
 	public void setUp() {
-		manager = new PackageManager(new FlightSearchMock(), new HotelSearchMock(), new DayTourSearchMock(), 
-				new FlightReservationMock(), new HotelReservationMock(), new DayTourReservationMock());
 	}
 	
 	@After
@@ -36,7 +34,20 @@ public class PackageManagerTest {
 			date = format.parse("15/04/2017");
 			String code = "JFK"; 
 			List<Flight> list = manager.searchFlights(date, code, true);
-			assertNotNull(list); // Is this ok?
+			assertNotNull(list); 
+		} catch (ParseException e) {
+			System.out.println("Parse exception");
+		}
+	}
+	
+	@Test
+	public void testSearchFlights() throws IllegalArgumentException {
+		Date date;
+		try {
+			date = format.parse("15/04/2017");
+			String code = "JFK"; 
+			List<Flight> list = manager.searchFlights(date, code, true);
+			assertNotNull(list); 
 		} catch (ParseException e) {
 			System.out.println("Parse exception");
 		}
@@ -82,7 +93,7 @@ public class PackageManagerTest {
 			arrival = format.parse("15/04/2017");
 			returning = format.parse("15/05/2017");
 			List<Hotel> list = manager.searchHotels(arrival, returning);
-			assertNotNull(list); // Is this ok?
+			assertNotNull(list);
 		} catch (ParseException e) {
 			System.out.println("Parse exception");
 		}
@@ -111,14 +122,4 @@ public class PackageManagerTest {
 			System.out.println("Parse exception");
 		}
 	}
-	
-	// Tests for booking a package
-	
-	@Test
-	public void testBookPackage() {
-		TravelPackage myPackage = manager.getPackage();
-		// ... do something to package
-		manager.bookPackage();
-	}
-
 }

@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface DayTourSearch {
 	
-	public List<DayTour> search(Date departing, Date returning);
+	public List<DayTour> search(Date departing, Date returning, int num);
 	
 }

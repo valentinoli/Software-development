@@ -11,7 +11,7 @@ public class PackageManager {
 	private FlightReservation fres;
 	private HotelReservation hres;
 	private DayTourReservation dtres;
-	
+		
 	public PackageManager(FlightSearch fsearch, HotelSearch hsearch, DayTourSearch dtsearch, 
 			FlightReservation fres, HotelReservation hres, DayTourReservation dtres) {
 		this.packageInMaking = new TravelPackage();
@@ -30,7 +30,7 @@ public class PackageManager {
 	public void bookPackage() {
 		fres.book(packageInMaking.getInbound());
 		fres.book(packageInMaking.getOutbound());
-		hres.book(packageInMaking.getHotel());
+		// hres.book(packageInMaking.getHotel());
 		for(DayTour tour : packageInMaking.getDayTours()) {
 			dtres.book(tour);
 		}
@@ -65,7 +65,7 @@ public class PackageManager {
 		} else if(arrivalDate == null || returningDate == null) {
 			throw new IllegalArgumentException("Please select both the dates of arrival and return");
 		}
-		return hsearch.search(arrivalDate, returningDate);
+		return hsearch.search(arrivalDate, returningDate, getPackage().getTravellers());
 	}
 	
 	public List<DayTour> searchDayTours(Date arrivalDate, Date returningDate) {
@@ -74,7 +74,7 @@ public class PackageManager {
 		} else if(arrivalDate == null || returningDate == null) {
 			throw new IllegalArgumentException("Please select both the dates of arrival and return");
 		}
-		return dtsearch.search(arrivalDate, returningDate);		
+		return dtsearch.search(arrivalDate, returningDate, getPackage().getTravellers());		
 	}
 
 }
