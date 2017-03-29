@@ -14,7 +14,7 @@ public class PackageManagerTest {
 	
 	@Before
 	public void setUp() {
-		manager = new PackageManager();
+		manager = new PackageManager(new FlightSearchMock(), );
 	}
 	
 	@After
@@ -47,9 +47,14 @@ public class PackageManagerTest {
 			departing = format.parse("15/04/2017");
 			manager.searchOutboundFlights(departing, "");
 		} catch (ParseException e) {
+			// Can't happen
 			System.out.println("Parse exception");
 		}
 	}
 	
+	@Test(expected=ParseException.class)
+	public void testSearchOutboundFlightsInvalidDateFormat() {
+		Date departing = format.parse("1/4/23");
+	}
 
 }
