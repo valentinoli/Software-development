@@ -17,8 +17,7 @@ public class PackageManagerTest {
 	private SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Before
-	public void setUp() {
-	}
+	public void setUp() { }
 	
 	@After
 	public void tearDown() {
@@ -29,6 +28,8 @@ public class PackageManagerTest {
 	
 	@Test
 	public void testSearchFlights() throws IllegalArgumentException {
+		this.manager = new PackageManager(new FlightSearchMock(), new HotelSearchMock(), new DayTourSearchMock(), 
+				new FlightReservationMock(), new HotelReservationMock(), new DayTourReservationMock());
 		Date date;
 		try {
 			date = format.parse("15/04/2017");
@@ -41,7 +42,9 @@ public class PackageManagerTest {
 	}
 	
 	@Test
-	public void testSearchFlights() throws IllegalArgumentException {
+	public void testSearchFlightsNoResults() throws IllegalArgumentException {
+		this.manager = new PackageManager(new FlightSearchEmptyMock(), new HotelSearchMock(), new DayTourSearchMock(), 
+				new FlightReservationMock(), new HotelReservationMock(), new DayTourReservationMock());
 		Date date;
 		try {
 			date = format.parse("15/04/2017");
@@ -53,14 +56,37 @@ public class PackageManagerTest {
 		}
 	}
 	
+	@Test(expected=NullPointerException.class)
+	public void testSearchFlightsNullResult() throws IllegalArgumentException {
+		this.manager = new PackageManager(new FlightSearchNullMock(), new HotelSearchMock(), new DayTourSearchMock(), 
+				new FlightReservationMock(), new HotelReservationMock(), new DayTourReservationMock());
+		Date date;
+		try {
+			date = format.parse("15/04/2017");
+			String code = "JFK"; 
+			List<Flight> list = manager.searchFlights(date, code, true);
+			list.size();
+		} catch (ParseException e) {
+			System.out.println("Parse exception");
+		}
+	}
+	
 	@Test(expected=IllegalArgumentException.class)
 	public void testSearchFlightsNoDepartingDate() {
+		
+		this.manager = new PackageManager(new FlightSearchMock(), new HotelSearchMock(), new DayTourSearchMock(), 
+				new FlightReservationMock(), new HotelReservationMock(), new DayTourReservationMock());
+		
 		Date date = null;
 		this.manager.searchFlights(date, "JFK", true);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void testSearchFlightsWithNoCode() {
+		
+		this.manager = new PackageManager(new FlightSearchMock(), new HotelSearchMock(), new DayTourSearchMock(), 
+				new FlightReservationMock(), new HotelReservationMock(), new DayTourReservationMock());
+		
 		Date departing;
 		try {
 			departing = format.parse("15/04/2017");
@@ -73,6 +99,10 @@ public class PackageManagerTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testSearchOutboundFlightsIllegalAirport() {
+		
+		this.manager = new PackageManager(new FlightSearchMock(), new HotelSearchMock(), new DayTourSearchMock(), 
+				new FlightReservationMock(), new HotelReservationMock(), new DayTourReservationMock());
+		
 		Date departing;
 		try {
 			departing = format.parse("15/04/2017");
@@ -88,6 +118,10 @@ public class PackageManagerTest {
 	
 	@Test
 	public void testSearchHotels() throws IllegalArgumentException {
+		
+		this.manager = new PackageManager(new FlightSearchMock(), new HotelSearchMock(), new DayTourSearchMock(), 
+				new FlightReservationMock(), new HotelReservationMock(), new DayTourReservationMock());
+		
 		Date arrival, returning;
 		try {
 			arrival = format.parse("15/04/2017");
@@ -101,6 +135,10 @@ public class PackageManagerTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testSearchHotelsMissingDate() {
+		
+		this.manager = new PackageManager(new FlightSearchMock(), new HotelSearchMock(), new DayTourSearchMock(), 
+				new FlightReservationMock(), new HotelReservationMock(), new DayTourReservationMock());
+		
 		Date arrival, returning;
 		try {
 			arrival = null;
@@ -113,6 +151,10 @@ public class PackageManagerTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testSearchHotelsWrongOrderOfDates() {
+		
+		this.manager = new PackageManager(new FlightSearchMock(), new HotelSearchMock(), new DayTourSearchMock(), 
+				new FlightReservationMock(), new HotelReservationMock(), new DayTourReservationMock());
+		
 		Date arrival, returning;
 		try {
 			arrival = format.parse("15/05/2017");

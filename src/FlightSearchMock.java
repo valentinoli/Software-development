@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/* Mocks a flight-search that returns a nonempty list */
 public class FlightSearchMock implements FlightSearch {
 
 	@Override

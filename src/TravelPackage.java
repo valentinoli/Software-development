@@ -9,6 +9,7 @@ public class TravelPackage {
 	private Flight inbound;
 	private Hotel hotel;
 	private Vector<DayTour> tours;
+	Customer customer;
 	
 	/* Default constructor */
 
@@ -36,11 +37,11 @@ public class TravelPackage {
 	public Vector<DayTour> getDayTours() {
 		return tours;
 	}
-/*
+
 	public Customer getCustomer() {
 		return customer;
 	}
-	*/
+	
 	public int calculatePrice() {
 		
 		price =  outbound.getPrice() + inbound.getPrice();
@@ -82,14 +83,7 @@ public class TravelPackage {
 		}
 	}
 	
-	/*
-	public void submitReview(int rating, String comment) {
-		if(rating < 0 || rating > 5) {
-			throw new IllegalArgumentException();
-		} else if(review != null) {
-			System.out.println("Review already exists");
-			return;
-		}
-		review = new Review(rating, comment);
-	}*/
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
 }

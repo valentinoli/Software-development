@@ -7,7 +7,6 @@ public class Hotel {
 	 * corresponds to the Hotel-team's implementation
 	 */	
 	
-	private int id;
 	private String name;
 	private String address;
 	/* Unsure about type of following instance variable */
@@ -20,10 +19,6 @@ public class Hotel {
 	public int maxAvailableRooms(Date start, Date end) {
 		/* Missing implementation */
 		return -1;
-	}
-	
-	public int getId() {
-		return id;
 	}
 	
 	public String getName() {
