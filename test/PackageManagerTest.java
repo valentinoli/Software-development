@@ -26,7 +26,7 @@ public class PackageManagerTest {
 	
 	// Tests for searching flights
 	
-	@Test
+	@Test // Normal search resulting in a nonempty list of flights
 	public void testSearchFlights() throws IllegalArgumentException {
 		this.manager = new PackageManager(new FlightSearchMock(), new HotelSearchMock(), new DayTourSearchMock(), 
 				new FlightReservationMock(), new HotelReservationMock(), new DayTourReservationMock());
@@ -41,7 +41,7 @@ public class PackageManagerTest {
 		}
 	}
 	
-	@Test
+	@Test // Search resulting in an empty list of flights
 	public void testSearchFlightsNoResults() throws IllegalArgumentException {
 		this.manager = new PackageManager(new FlightSearchEmptyMock(), new HotelSearchMock(), new DayTourSearchMock(), 
 				new FlightReservationMock(), new HotelReservationMock(), new DayTourReservationMock());
@@ -56,6 +56,7 @@ public class PackageManagerTest {
 		}
 	}
 	
+	// Search resulting in a null reference
 	@Test(expected=NullPointerException.class)
 	public void testSearchFlightsNullResult() throws IllegalArgumentException {
 		this.manager = new PackageManager(new FlightSearchNullMock(), new HotelSearchMock(), new DayTourSearchMock(), 
@@ -71,6 +72,7 @@ public class PackageManagerTest {
 		}
 	}
 	
+	// Search with date as a null reference should produce an exception
 	@Test(expected=IllegalArgumentException.class)
 	public void testSearchFlightsNoDepartingDate() {
 		
@@ -80,7 +82,8 @@ public class PackageManagerTest {
 		Date date = null;
 		this.manager.searchFlights(date, "JFK", true);
 	}
-
+	
+	// Search with airport code as a null reference should produce an exception
 	@Test(expected=IllegalArgumentException.class)
 	public void testSearchFlightsWithNoCode() {
 		
@@ -97,6 +100,7 @@ public class PackageManagerTest {
 		}
 	}
 	
+	// Search with a non-existing airport code should produce an exception	
 	@Test(expected=IllegalArgumentException.class)
 	public void testSearchOutboundFlightsIllegalAirport() {
 		
@@ -114,9 +118,9 @@ public class PackageManagerTest {
 		}
 	}
 	
-	// Tests for searching hotels
+	// Tests for searching hotels (identical tests for searching daytours not shown here)
 	
-	@Test
+	@Test // Normal search resulting in a nonempty list of hotels
 	public void testSearchHotels() throws IllegalArgumentException {
 		
 		this.manager = new PackageManager(new FlightSearchMock(), new HotelSearchMock(), new DayTourSearchMock(), 
@@ -133,6 +137,7 @@ public class PackageManagerTest {
 		}
 	}
 	
+	// Search with at least one date as a null reference should produce an exception	
 	@Test(expected=IllegalArgumentException.class)
 	public void testSearchHotelsMissingDate() {
 		
@@ -149,6 +154,7 @@ public class PackageManagerTest {
 		}
 	}
 	
+	// Search with returning date that comes before the arrival date should produce an exception	
 	@Test(expected=IllegalArgumentException.class)
 	public void testSearchHotelsWrongOrderOfDates() {
 		
