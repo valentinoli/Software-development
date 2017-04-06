@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.Properties;
 import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -24,7 +26,8 @@ public class MainFrame extends javax.swing.JFrame {
         initComponents();
         adjustFrame();
         calendar();
-       
+        comboBox();
+        
     }
     
     private void adjustFrame(){
@@ -50,7 +53,13 @@ public class MainFrame extends javax.swing.JFrame {
         jDepartingCalendar.add(datePicker);
         jReturningCalendar.add(datePicker2);
     }
-
+    private void comboBox(){
+        JTextField text = (JTextField)jDepartureComboBox.getEditor().getEditorComponent();
+        text.setText("");
+        text.addKeyListener(new ComboKeyHandler(jDepartureComboBox));
+        
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -81,8 +90,8 @@ public class MainFrame extends javax.swing.JFrame {
         jDepartingCalendar = new javax.swing.JPanel();
         jReturningCalendar = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jComboBox2 = new javax.swing.JComboBox<>();
+        jLocationComboBox = new javax.swing.JComboBox<>();
+        jDepartureComboBox = new javax.swing.JComboBox<>();
         jHotelSelect = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jToursSelect = new javax.swing.JPanel();
@@ -271,9 +280,12 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jLocationComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jDepartureComboBox.setEditable(true);
+        jDepartureComboBox.setFont(new java.awt.Font("Segoe UI Light", 0, 20)); // NOI18N
+        jDepartureComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Bahamas, The", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burma", "Burundi", "Cambodia", "Cameroon", "Canada", "Cabo Verde", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo, Democratic Republic of the", "Congo, Republic of the", "Costa Rica", "Cote d'Ivoire", "Croatia", "Cuba", "Curacao", "Cyprus", "Czechia" }));
+        jDepartureComboBox.setBorder(null);
 
         javax.swing.GroupLayout jSearchLayout = new javax.swing.GroupLayout(jSearch);
         jSearch.setLayout(jSearchLayout);
@@ -287,17 +299,17 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGap(68, 68, 68)
                 .addGroup(jSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jSearchLayout.createSequentialGroup()
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(227, 227, 227)
+                        .addComponent(jDepartureComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(181, 181, 181)
                         .addGroup(jSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jSearchLayout.createSequentialGroup()
-                                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLocationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jTravelerSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(125, 125, 125))
                             .addGroup(jSearchLayout.createSequentialGroup()
                                 .addComponent(jLocationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 236, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 205, Short.MAX_VALUE)
                                 .addComponent(jTravelerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(97, 97, 97))))
                     .addGroup(jSearchLayout.createSequentialGroup()
@@ -307,12 +319,9 @@ public class MainFrame extends javax.swing.JFrame {
                             .addComponent(jDepartureLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(166, 166, 166)
                         .addGroup(jSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jSearchLayout.createSequentialGroup()
-                                .addComponent(jReturningCalendar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(jSearchLayout.createSequentialGroup()
-                                .addComponent(jReturningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                            .addComponent(jReturningCalendar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jReturningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap())))
         );
         jSearchLayout.setVerticalGroup(
             jSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -322,16 +331,13 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(jLocationLabel)
                     .addComponent(jDepartureLabel)
                     .addComponent(jTravelerLabel))
+                .addGap(18, 18, 18)
                 .addGroup(jSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jSearchLayout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jTravelerSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jSearchLayout.createSequentialGroup()
-                        .addGap(38, 38, 38)
-                        .addGroup(jSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
+                    .addComponent(jTravelerSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jDepartureComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLocationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
                 .addGroup(jSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jDepartingLabel)
                     .addComponent(jReturningLabel))
@@ -339,7 +345,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(jSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jDepartingCalendar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jReturningCalendar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addGap(55, 55, 55))
         );
@@ -449,38 +455,26 @@ public class MainFrame extends javax.swing.JFrame {
     private void jToursMouseExited(java.awt.event.MouseEvent evt) {                                   
         jTours.setBorder(BorderFactory.createEmptyBorder());
     }                                  
-
-    private void jFlightMouseClicked(java.awt.event.MouseEvent evt) {                                     
+    private void TabArea(JPanel a){
         //Removing old panel
         jTabArea.removeAll();
         jTabArea.repaint();
         jTabArea.validate();
         //Adding new one
-        jTabArea.add(jSearch);
+        jTabArea.add(a);
         jTabArea.repaint();
         jTabArea.validate();
-        
+    }
+    private void jFlightMouseClicked(java.awt.event.MouseEvent evt) {                                     
+        TabArea(jSearch);
     }                                    
 
     private void jHotelMouseClicked(java.awt.event.MouseEvent evt) {                                    
-        //Removing old panel
-        jTabArea.removeAll();
-        jTabArea.repaint();
-        jTabArea.validate();
-        //Adding new one
-        jTabArea.add(jHotelSelect);
-        jTabArea.repaint();
-        jTabArea.validate();
+        TabArea(jHotelSelect);
     }                                   
 
     private void jToursMouseClicked(java.awt.event.MouseEvent evt) {                                    
-        jTabArea.removeAll();
-        jTabArea.repaint();
-        jTabArea.validate();
-        //Adding new one
-        jTabArea.add(jToursSelect);
-        jTabArea.repaint();
-        jTabArea.validate();
+        TabArea(jToursSelect);
     }                                   
 
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {                                     
@@ -516,6 +510,7 @@ public class MainFrame extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new MainFrame().setVisible(true);
@@ -526,11 +521,10 @@ public class MainFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify                     
     private javax.swing.JLabel jAbout;
     private javax.swing.JPanel jBackground;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jContact;
     private javax.swing.JPanel jDepartingCalendar;
     private javax.swing.JLabel jDepartingLabel;
+    private javax.swing.JComboBox<String> jDepartureComboBox;
     private javax.swing.JLabel jDepartureLabel;
     private javax.swing.JLabel jExit;
     private javax.swing.JLabel jFlight;
@@ -540,6 +534,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JComboBox<String> jLocationComboBox;
     private javax.swing.JLabel jLocationLabel;
     private javax.swing.JPanel jMenu;
     private javax.swing.JPanel jReturningCalendar;
