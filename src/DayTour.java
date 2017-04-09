@@ -1,7 +1,5 @@
 package src;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class DayTour {
 	
@@ -10,9 +8,10 @@ public class DayTour {
 	 */	
 	
 	private String name;
-	private int duration;
+	private int length;
 	private String location;
-	private Date time;
+	private int time;
+	private int date;
 	private int availableSeats;
 	private int price;
 	
@@ -20,30 +19,35 @@ public class DayTour {
 	public DayTour(String name, int duration, String location, String time, String date, int availableSeats, 
 			int price) throws ParseException {
 		this.name = name;
-		this.duration = duration;
+		this.length = duration;
 		this.location = location;
 		this.availableSeats = availableSeats;
 		this.price = price;
-		SimpleDateFormat format = new SimpleDateFormat("ddMMyyyyHHmm");
-		this.time = format.parse(date + time);
-		
+		// SimpleDateFormat format = new SimpleDateFormat("ddMMyyyyHHmm");
+		// this.time = format.parse(date + time);
+		this.time = Integer.parseInt(time);
+		this.date = Integer.parseInt(date);
 		
 	}
 	/* Instance methods */
-	public String getName() {
+	public String getNameOfTrip() {
 		return name;
 	}
 
-	public int getDuration() {
-		return duration;
+	public int getLengthOfTrip() {
+		return length;
 	}
 
 	public String getLocation() {
 		return location;
 	}
 	
-	public Date getTime() {
+	public int getTime() {
 		return time;
+	}
+	
+	public int getDate() {
+		return date;
 	}
 
 	public int getAvailableSeats() {

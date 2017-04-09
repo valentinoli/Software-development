@@ -20,14 +20,16 @@ public class Hotel {
 		return name;
 	}
 
-	public String getLocation() {
+	public String getAddress() {
 		return location;
 	}
 
+	// Er Hotel-hópurinn ekki alveg örugglega með svona aðferð?
 	public ST<Date, Integer> getRoomsPerDate() {
 		return roomsPerDate;
 	}
 
+	// Hotel-hópurinn ekki með svona aðferð...
 	public int getPrice() {
 		return price;
 	}
