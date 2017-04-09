@@ -1,4 +1,6 @@
 package src;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DayTour {
@@ -8,66 +10,57 @@ public class DayTour {
 	 */	
 	
 	private String name;
-	private String phone;
-	private String email;
-	private String location;
-	private Date time;
 	private int duration;
+	private String location;
+	private int length;
+	private Date time;
+	private int availableSeats;
 	private int price;
-	private String tags;
-	private int ticketsAvailable;
 	
 	/* Constructor */
-	public DayTour(String name, String phone, String email, String location, Date time, int duration, int price,
-			String tags, int ticketsAvailable) {
+	public DayTour(String name, int duration, String location, int length, int time, int availableSeats, 
+			int price) throws ParseException {
 		this.name = name;
-		this.phone = phone;
-		this.email = email;
-		this.location = location;
-		this.time = time;
 		this.duration = duration;
+		this.location = location;
+		this.length = length;
+		this.availableSeats = availableSeats;
 		this.price = price;
-		this.tags = tags;
-		this.ticketsAvailable = ticketsAvailable;
+		SimpleDateFormat format = new SimpleDateFormat("ddMMyyyy");
+		this.time = format.parse(Integer.toString(time));
+		
+		
 	}
-	
 	/* Instance methods */
 	public String getName() {
 		return name;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public Date getTime() {
-		return time;
 	}
 
 	public int getDuration() {
 		return duration;
 	}
 
+	public String getLocation() {
+		return location;
+	}
+
+	public int getLength() {
+		return length;
+	}
+
+	public Date getTime() {
+		return time;
+	}
+
+	public int getAvailableSeats() {
+		return availableSeats;
+	}
+
 	public int getPrice() {
 		return price;
 	}
-
-	public String getTags() {
-		return tags;
-	}
-
-	public int getTicketsAvailable() {
-		return ticketsAvailable;
-	}
 	
+
 	
 	
 }
