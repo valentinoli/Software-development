@@ -1,36 +1,36 @@
 package src;
 import java.util.Date;
+import edu.princeton.cs.algs4.ST;
 
 public class Hotel {
 	
-	/* Reminder: Make sure the following 
-	 * corresponds to the Hotel-team's implementation
-	 */	
-	
 	private String name;
-	private String address;
-	/* Unsure about type of following instance variable */
-	// private Vector<Pair> freeRoomsPerDate;
+	private String location;
+	private ST<Date, Integer> roomsPerDate;
 	private int price;
 	
-	/* Missing constructor */
-	
-	/* Instance methods */
-	public int maxAvailableRooms(Date start, Date end) {
-		/* Missing implementation */
-		return -1;
+	public Hotel(String name, String location, int price) {
+		this.name = name;
+		this.location = location;
+		this.price = price;
+		roomsPerDate = new ST<>();
 	}
-	
+
 	public String getName() {
 		return name;
 	}
 
-	public String getAddress() {
-		return address;
+	public String getLocation() {
+		return location;
+	}
+
+	public ST<Date, Integer> getRoomsPerDate() {
+		return roomsPerDate;
 	}
 
 	public int getPrice() {
 		return price;
 	}
+	
 	
 }
