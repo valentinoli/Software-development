@@ -1,5 +1,5 @@
 package src;
 public class FlightReservationMock implements FlightReservation {
 	
-	public void book(Flight f) { return; }
+	public void book(Flight f) { System.out.println("Flight: " + f.getFlightNumber() + " reserved."); }
 }
