@@ -12,22 +12,20 @@ public class DayTour {
 	private String name;
 	private int duration;
 	private String location;
-	private int length;
 	private Date time;
 	private int availableSeats;
 	private int price;
 	
 	/* Constructor */
-	public DayTour(String name, int duration, String location, int length, int time, int availableSeats, 
+	public DayTour(String name, int duration, String location, String time, String date, int availableSeats, 
 			int price) throws ParseException {
 		this.name = name;
 		this.duration = duration;
 		this.location = location;
-		this.length = length;
 		this.availableSeats = availableSeats;
 		this.price = price;
-		SimpleDateFormat format = new SimpleDateFormat("ddMMyyyy");
-		this.time = format.parse(Integer.toString(time));
+		SimpleDateFormat format = new SimpleDateFormat("ddMMyyyyHHmm");
+		this.time = format.parse(date + time);
 		
 		
 	}
@@ -43,11 +41,7 @@ public class DayTour {
 	public String getLocation() {
 		return location;
 	}
-
-	public int getLength() {
-		return length;
-	}
-
+	
 	public Date getTime() {
 		return time;
 	}
