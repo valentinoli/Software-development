@@ -52,7 +52,7 @@ public class HotelSearchMock implements HotelSearch {
 			System.out.println(t.getName());
 			System.out.println();
 			for(Date date : t.getRoomsPerDate().keys()) {
-				System.out.println("Date: " + date + " Available rooms: " + t.getRoomsPerDate().get(date));
+				System.out.println(date + " Available rooms: " + t.getRoomsPerDate().get(date));
 			}
 			System.out.println();
 		}
