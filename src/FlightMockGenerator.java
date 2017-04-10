@@ -117,7 +117,7 @@ public class FlightMockGenerator implements FlightSearch {
                 String from = ap.getName() + " (" + ap.getAirportCode() + "), " + ap.getCountry();
                 String to = "Keflavik International Airport (KEF), Iceland";
                 
-                Flight flight = new Flight("FI-200", "Icelandair", from, to, arrival, departure, available, price);
+                Flight flight = new Flight("FI-200", "Icelandair", from, to, departure, arrival, available, price);
                 flights.add(flight);    
             }
         }
@@ -147,7 +147,7 @@ public class FlightMockGenerator implements FlightSearch {
                 String from = ap.getName() + " (" + ap.getAirportCode() + "), " + ap.getCountry();
                 String to = "Keflavik International Airport (KEF), Iceland";
                 
-                Flight flight = new Flight("FI-200", "Icelandair",to, from, arrival, departure, available, price);
+                Flight flight = new Flight("FI-200", "Icelandair",to, from, departure, arrival, available, price);
                 flights.add(flight);    
             }
         }
