@@ -1,4 +1,3 @@
-Name; Location; Date; AvailableRoom; Price
 Center Hotel; RVK; 010517; 3; 6000
 Center Hotel; RVK; 020517; 2; 6000
 Center Hotel; RVK; 030517; 2; 6000
