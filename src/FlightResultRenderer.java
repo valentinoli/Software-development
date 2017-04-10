@@ -10,27 +10,31 @@ import javax.swing.ListCellRenderer;
 
 public class FlightResultRenderer extends FlightResult implements ListCellRenderer {
     
-    private final Color background = new Color(140, 200, 255);
-    
-    
+ 
     @Override
     public Component getListCellRendererComponent (JList list, Object value, int index, boolean isSelected, boolean hasFocus) {
-        //if (value == null) return new JLabel();
+        if (value == null) return new JLabel();
         
         if (index % 2 == 0) {
             setBackground(new Color(230, 230, 230));
-            //setForeground(Color.GREEN);
         }
         else {
             setBackground(new Color(220, 220, 220));
         }
         
         if (isSelected) {
-           // setOpaque(true);
             setBackground(new Color(180, 200, 190));
             setForeground(list.getForeground());
         }
- 
+        
+        Flight flight = (Flight) value;
+        String departureTime = new SimpleDateFormat("HH:mm").format(flight.getDepartureTime());
+        String arrivalTime = new SimpleDateFormat("HH:mm").format(flight.getArrivalTime());
+        
+        getWeekday().setText(new SimpleDateFormat("EEE", Locale.ENGLISH).format(flight.getDepartureTime()));
+        getDay().setText(new SimpleDateFormat("dd. MMMM", Locale.ENGLISH).format(flight.getDepartureTime()));
+        getPrice().setText("$ " + flight.getPrice());
+        getTime().setText(departureTime + " - " + arrivalTime);
         
         return this;
     }

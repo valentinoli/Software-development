@@ -3,11 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
- package src;
+
 /**
  *
  * @author Notandi
  */
+package src;
 public class FlightResult extends javax.swing.JPanel {
 
     /**
@@ -35,7 +36,7 @@ public class FlightResult extends javax.swing.JPanel {
 
         weekday.setFont(new java.awt.Font("Segoe UI Light", 1, 13)); // NOI18N
         weekday.setText("Fri");
-        add(weekday, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 0, 30, -1));
+        add(weekday, new org.netbeans.lib.awtextra.AbsoluteConstraints(68, 0, 30, -1));
 
         price.setFont(new java.awt.Font("Segoe UI Black", 1, 16)); // NOI18N
         price.setForeground(new java.awt.Color(153, 51, 0));
@@ -45,11 +46,11 @@ public class FlightResult extends javax.swing.JPanel {
         time.setFont(new java.awt.Font("Segoe UI Light", 1, 13)); // NOI18N
         time.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/departure-13x13-icon.png"))); // NOI18N
         time.setText("06:30 - 15:20");
-        add(time, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 45, 130, -1));
+        add(time, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 130, -1));
 
         day.setFont(new java.awt.Font("Segoe UI Light", 1, 13)); // NOI18N
         day.setText("24 MAR");
-        add(day, new org.netbeans.lib.awtextra.AbsoluteConstraints(53, 25, 60, -1));
+        add(day, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 30, 60, -1));
     }// </editor-fold>//GEN-END:initComponents
 
 

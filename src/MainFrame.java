@@ -4,16 +4,27 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.DefaultFormatter;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -24,26 +35,99 @@ public class MainFrame extends javax.swing.JFrame {
      * Creates new form MainFrame
      */
     
-    SlidePanel sp = new SlidePanel();
-    JDatePickerImpl datePicker2;
-    JDatePickerImpl datePicker;
-    int xMouse;
-    int yMouse;
+    private SlidePanel sp = new SlidePanel();
+    private JDatePickerImpl returnPicker;
+    private JDatePickerImpl departPicker;
+    private int xMouse;
+    private int yMouse;
+    private int travelersValue;
+    
+    private SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+    
+    private FlightMockGenerator flightMock;
     
     public MainFrame() {
         initComponents();
         //adjustFrame();
+        
+        //airportCodes.txt should be in the same directory as the 'src' folder.
+        flightMock = new FlightMockGenerator("airportCodes.txt");  
+        generateComboboxModel();  
         calendar();
         comboBox();
         flight_label.setFocusable(true);
-        
-        //test
-        DefaultListModel dl = new DefaultListModel();
-        for (int i = 0; i < 50; i++) {
-            dl.addElement("heheh");
+    }
+    
+    private void searchFlights() {
+        Date departure_date = null;
+        Date arrival_date = null;
+        String origin = "";
+        String destination = "";
+        try {
+            departure_date = getDepartDate();
+            arrival_date = getReturnDate();
+            origin = (String) jDepartureComboBox.getSelectedItem();
+            destination = (String) jLocationComboBox.getSelectedItem();
+            List<Flight> outbound = flightMock.search(departure_date, origin, destination, travelersValue);
+            List<Flight> inbound = flightMock.search(arrival_date, destination, origin, travelersValue);
+            displayFlightResult(inbound, outbound);
+            scrollToDate(inbound_list, arrival_date);
+            scrollToDate(outbound_list, departure_date);
+            slideLeft();
+        } catch (NullPointerException e) {
+            System.out.println("Fill in all inputs");
         }
-        outbound_list.setModel(dl);
-        inbound_list.setModel(dl);
+    }
+    
+    private void generateComboboxModel() {
+        DefaultComboBoxModel dbm = new DefaultComboBoxModel();
+        List<Airport> airports = flightMock.getAirports();
+        Collections.sort(airports);
+        for (Airport ap : airports) {
+            String name = ap.getName() + " (" + ap.getAirportCode() + "), " + ap.getCountry();
+            dbm.addElement(name);
+        }
+        jDepartureComboBox.setModel(dbm);
+    }
+    
+    private void displayFlightResult(List<Flight> inbound_flights, List<Flight> outbound_flights) {
+        DefaultListModel inbound = new DefaultListModel();
+        DefaultListModel outbound = new DefaultListModel();
+        addToListModel(inbound_flights, inbound);
+        addToListModel(outbound_flights, outbound);
+        setFlightLabel();
+        inbound_list.setModel(inbound);
+        outbound_list.setModel(outbound);
+    }
+    
+    private void setFlightLabel() {
+        String  t = "<font color='rgb(153,51,0'>  to  </font>";
+        String from = (String) jDepartureComboBox.getSelectedItem();
+        String to = (String) jLocationComboBox.getSelectedItem();
+        
+        outbound_flight.setText("<html>" + from + t + to + "</html>");
+        inbound_flight.setText("<html>" + to + t + from + "</html>");
+    }
+    
+    public void scrollToDate(JList list, Date date) {
+        int index = getFlightIndexAt(date, (DefaultListModel) list.getModel());
+        list.setSelectedIndex(index);
+        list.ensureIndexIsVisible(index);
+    }
+    
+    public int getFlightIndexAt(Date d, DefaultListModel dl) {
+        for (int i = 0; i < dl.size(); i++) {
+            if (fmt.format(((Flight) dl.get(i)).getDepartureTime()).equals(fmt.format(d))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
+    private void addToListModel(List<?> item, DefaultListModel  dm) {
+        for (int i = 0; i < item.size(); i++) {
+            dm.addElement(item.get(i));
+        }
     }
     
     private void adjustFrame(){
@@ -60,15 +144,15 @@ public class MainFrame extends javax.swing.JFrame {
         p.put("text.month", "Month");
         p.put("text.year", "Year");
         JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
-        datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        departPicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
         JDatePanelImpl datePanel2 = new JDatePanelImpl(model2, p);
-        datePicker2 = new JDatePickerImpl(datePanel2, new DateLabelFormatter());
+        returnPicker = new JDatePickerImpl(datePanel2, new DateLabelFormatter());
                
     
-        datePicker.setBounds(0,0,150,40);
-        datePicker2.setBounds(0,0,150,40);
-        jDepartingCalendar.add(datePicker);
-        jReturningCalendar.add(datePicker2);
+        departPicker.setBounds(0,0,150,40);
+        returnPicker.setBounds(0,0,150,40);
+        jDepartingCalendar.add(departPicker);
+        jReturningCalendar.add(returnPicker);
     }
     
     private void comboBox(){
@@ -86,8 +170,7 @@ public class MainFrame extends javax.swing.JFrame {
         if (c instanceof JScrollPane) {
             JScrollPane scrollpane = (JScrollPane) c;
             JScrollBar scrollBar = scrollpane.getVerticalScrollBar();
-            Dimension scrollBarDim = new Dimension(width, scrollBar
-                    .getPreferredSize().height);
+            Dimension scrollBarDim = new Dimension(width, scrollBar.getPreferredSize().height);
             scrollBar.setPreferredSize(scrollBarDim);
         }
     }
@@ -105,7 +188,6 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }
     
-    
     private void change_preference_tab(JPanel a){
         //Removing old panel
         preference_container.removeAll();
@@ -117,6 +199,28 @@ public class MainFrame extends javax.swing.JFrame {
     private void slideScrollBar(JScrollPane spane, int increment) {
         int current = spane.getHorizontalScrollBar().getValue();
         spane.getHorizontalScrollBar().setValue(current + increment);
+    }
+    
+    private void slideLeft() {
+        sp.slideLeft(result_panel.getX() - result_panel.getWidth(), 10, 20, result_panel);
+        sp.slideLeft(preference_panel.getX() - preference_panel.getWidth(), 10, 20, preference_panel);
+    }
+    
+    private void slideRight() {
+        sp.slideRight(result_panel.getX() + result_panel.getWidth(), 10, 20, result_panel);
+        sp.slideRight(preference_panel.getX() + preference_panel.getWidth(), 10, 20, preference_panel);
+    }
+    
+    private Date getDepartDate() {
+        return (Date) departPicker.getModel().getValue();
+    }
+    
+    private Date getReturnDate() {
+        return (Date) returnPicker.getModel().getValue();
+    }
+    
+    private void setTravelersValue(int n) {
+        this.travelersValue = n;
     }
 
     /**
@@ -162,7 +266,7 @@ public class MainFrame extends javax.swing.JFrame {
         flight_label = new javax.swing.JLabel();
         hotel_label = new javax.swing.JLabel();
         day_tour_label = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        search_label = new javax.swing.JLabel();
         preference_container = new javax.swing.JPanel();
         flight_preference = new javax.swing.JPanel();
         jTitle = new javax.swing.JLabel();
@@ -391,25 +495,20 @@ public class MainFrame extends javax.swing.JFrame {
                     .addGroup(flight_resultLayout.createSequentialGroup()
                         .addComponent(inbound_back)
                         .addGap(42, 42, 42)
-                        .addGroup(flight_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(inbound_scrollpane, javax.swing.GroupLayout.PREFERRED_SIZE, 971, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, flight_resultLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(inbound_flight, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(297, 297, 297)))
+                        .addGroup(flight_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(inbound_flight, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(inbound_scrollpane, javax.swing.GroupLayout.DEFAULT_SIZE, 971, Short.MAX_VALUE))
                         .addGap(33, 33, 33)
                         .addComponent(inbound_forward))
                     .addGroup(flight_resultLayout.createSequentialGroup()
                         .addComponent(outbound_back)
                         .addGap(42, 42, 42)
                         .addGroup(flight_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(outbound_scrollpane, javax.swing.GroupLayout.PREFERRED_SIZE, 971, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, flight_resultLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(outbound_flight, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(297, 297, 297)))
-                        .addGap(33, 33, 33)
-                        .addComponent(outbound_forward)))
+                            .addGroup(flight_resultLayout.createSequentialGroup()
+                                .addComponent(outbound_scrollpane, javax.swing.GroupLayout.PREFERRED_SIZE, 971, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(33, 33, 33)
+                                .addComponent(outbound_forward))
+                            .addComponent(outbound_flight, javax.swing.GroupLayout.PREFERRED_SIZE, 971, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(78, 78, 78))
             .addGroup(flight_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(flight_resultLayout.createSequentialGroup()
@@ -420,31 +519,30 @@ public class MainFrame extends javax.swing.JFrame {
         flight_resultLayout.setVerticalGroup(
             flight_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, flight_resultLayout.createSequentialGroup()
-                .addContainerGap(110, Short.MAX_VALUE)
-                .addComponent(outbound_flight, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(114, Short.MAX_VALUE)
                 .addGroup(flight_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(flight_resultLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(outbound_scrollpane, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(flight_resultLayout.createSequentialGroup()
-                        .addGap(58, 58, 58)
-                        .addComponent(outbound_back))
-                    .addGroup(flight_resultLayout.createSequentialGroup()
-                        .addGap(59, 59, 59)
-                        .addComponent(outbound_forward)))
-                .addGap(71, 71, 71)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, flight_resultLayout.createSequentialGroup()
+                        .addGroup(flight_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(outbound_back, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(outbound_forward, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGap(124, 124, 124))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, flight_resultLayout.createSequentialGroup()
+                        .addComponent(outbound_flight, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(outbound_scrollpane, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(73, 73, 73)))
                 .addComponent(inbound_title, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(inbound_flight, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(flight_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(flight_resultLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(18, 18, 18)
+                        .addComponent(inbound_flight, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(13, 13, 13)
                         .addComponent(inbound_scrollpane, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(flight_resultLayout.createSequentialGroup()
-                        .addGap(58, 58, 58)
+                        .addGap(121, 121, 121)
                         .addComponent(inbound_back))
                     .addGroup(flight_resultLayout.createSequentialGroup()
-                        .addGap(59, 59, 59)
+                        .addGap(122, 122, 122)
                         .addComponent(inbound_forward)))
                 .addGap(53, 53, 53))
             .addGroup(flight_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -454,12 +552,14 @@ public class MainFrame extends javax.swing.JFrame {
                     .addContainerGap(552, Short.MAX_VALUE)))
         );
 
+        outbound_flight.setHorizontalAlignment(JLabel.CENTER);
         outbound_scrollpane.getViewport().setOpaque(false);
         outbound_scrollpane.setViewportBorder(null);
         outbound_scrollpane.getHorizontalScrollBar().setPreferredSize(new Dimension(0,0));
         inbound_scrollpane.getViewport().setOpaque(false);
         inbound_scrollpane.setViewportBorder(null);
         inbound_scrollpane.getHorizontalScrollBar().setPreferredSize(new Dimension(0,0));
+        inbound_flight.setHorizontalAlignment(JLabel.CENTER);
 
         result_container.add(flight_result, "card2");
 
@@ -606,14 +706,14 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI Light", 1, 24)); // NOI18N
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search-icon.png"))); // NOI18N
-        jLabel4.setText("Search  ");
-        jLabel4.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 1, 0, new java.awt.Color(0, 0, 0)));
-        jLabel4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+        search_label.setFont(new java.awt.Font("Segoe UI Light", 1, 24)); // NOI18N
+        search_label.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search-icon.png"))); // NOI18N
+        search_label.setText("Search  ");
+        search_label.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 1, 0, new java.awt.Color(0, 0, 0)));
+        search_label.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        search_label.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                jLabel4MouseReleased(evt);
+                search_labelMouseReleased(evt);
             }
         });
 
@@ -624,14 +724,11 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(preference_tabLayout.createSequentialGroup()
                 .addGap(65, 65, 65)
                 .addGroup(preference_tabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(day_tour_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(preference_tabLayout.createSequentialGroup()
-                        .addGroup(preference_tabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(hotel_label, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(flight_label, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 38, Short.MAX_VALUE)))
-                .addContainerGap())
+                    .addComponent(search_label, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(day_tour_label, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(hotel_label, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(flight_label, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
         preference_tabLayout.setVerticalGroup(
             preference_tabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -643,11 +740,11 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGap(54, 54, 54)
                 .addComponent(day_tour_label, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 132, Short.MAX_VALUE)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(search_label, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(86, 86, 86))
         );
 
-        jLabel4.setHorizontalTextPosition(SwingConstants.LEFT);
+        search_label.setHorizontalTextPosition(SwingConstants.LEFT);
 
         preference_panel.add(preference_tab);
         preference_tab.setBounds(0, 90, 260, 643);
@@ -673,6 +770,11 @@ public class MainFrame extends javax.swing.JFrame {
         jTravelerSpinner.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
         jTravelerSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         changeLF("Nimbus");
+        jTravelerSpinner.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTravelerSpinnerKeyPressed(evt);
+            }
+        });
 
         jDepartingLabel.setFont(new java.awt.Font("Segoe UI Light", 0, 18)); // NOI18N
         jDepartingLabel.setText("Departing");
@@ -708,13 +810,14 @@ public class MainFrame extends javax.swing.JFrame {
 
         jLocationComboBox.setEditable(true);
         jLocationComboBox.setFont(new java.awt.Font("Segoe UI Light", 0, 18)); // NOI18N
-        jLocationComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Bahamas, The", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burma", "Burundi", "Cambodia", "Cameroon", "Canada", "Cabo Verde", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo, Democratic Republic of the", "Congo, Republic of the", "Costa Rica", "Cote d'Ivoire", "Croatia", "Cuba", "Curacao", "Cyprus", "Czechia" }));
-        jLocationComboBox.setSelectedIndex(-1);
+        jLocationComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Keflavik International Airport (KEF), Iceland" }));
+        jLocationComboBox.setBorder(null);
 
         jDepartureComboBox.setEditable(true);
         jDepartureComboBox.setFont(new java.awt.Font("Segoe UI Light", 0, 18)); // NOI18N
         jDepartureComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Bahamas, The", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burma", "Burundi", "Cambodia", "Cameroon", "Canada", "Cabo Verde", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo, Democratic Republic of the", "Congo, Republic of the", "Costa Rica", "Cote d'Ivoire", "Croatia", "Cuba", "Curacao", "Cyprus", "Czechia" }));
         jDepartureComboBox.setSelectedIndex(-1);
+        jDepartureComboBox.setBorder(null);
 
         switch_label.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/switch-icon.png"))); // NOI18N
         switch_label.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -785,6 +888,16 @@ public class MainFrame extends javax.swing.JFrame {
         );
 
         jTitle.setHorizontalTextPosition(SwingConstants.LEFT);
+        JComponent comp = jTravelerSpinner.getEditor();
+        JFormattedTextField field = (JFormattedTextField) comp.getComponent(0);
+        DefaultFormatter formatter = (DefaultFormatter) field.getFormatter();
+        formatter.setCommitsOnValidEdit(true);
+        jTravelerSpinner.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                setTravelersValue((int)jTravelerSpinner.getValue());
+            }
+        });
         changeLF("Nimbus");
         changeLF("Nimbus");
 
@@ -961,31 +1074,33 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_day_tour_label1MousePressed
 
-    private void jLabel4MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseReleased
-        sp.slideLeft(result_panel.getX() - result_panel.getWidth(), 10, 25, result_panel);
-        sp.slideLeft(preference_panel.getX() - preference_panel.getWidth(), 10, 25, preference_panel);
-    }//GEN-LAST:event_jLabel4MouseReleased
+    private void search_labelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_search_labelMouseReleased
+        searchFlights();
+    }//GEN-LAST:event_search_labelMouseReleased
 
-    private void outbound_forwardMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_outbound_forwardMousePressed
-        slideScrollBar(outbound_scrollpane, 120);
-    }//GEN-LAST:event_outbound_forwardMousePressed
+    private void back_labelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_back_labelMouseReleased
+        slideRight();
+    }//GEN-LAST:event_back_labelMouseReleased
 
     private void inbound_forwardMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inbound_forwardMousePressed
         slideScrollBar(inbound_scrollpane, 120);
     }//GEN-LAST:event_inbound_forwardMousePressed
 
-    private void outbound_backMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_outbound_backMousePressed
-        slideScrollBar(outbound_scrollpane, -120);
-    }//GEN-LAST:event_outbound_backMousePressed
-
     private void inbound_backMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inbound_backMousePressed
         slideScrollBar(inbound_scrollpane, -120);
     }//GEN-LAST:event_inbound_backMousePressed
 
-    private void back_labelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_back_labelMouseReleased
-        sp.slideRight(result_panel.getX() + result_panel.getWidth(), 10, 25, result_panel);
-        sp.slideRight(preference_panel.getX() + preference_panel.getWidth(), 10, 25, preference_panel);
-    }//GEN-LAST:event_back_labelMouseReleased
+    private void outbound_forwardMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_outbound_forwardMousePressed
+        slideScrollBar(outbound_scrollpane, 120);
+    }//GEN-LAST:event_outbound_forwardMousePressed
+
+    private void outbound_backMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_outbound_backMousePressed
+        slideScrollBar(outbound_scrollpane, -120);
+    }//GEN-LAST:event_outbound_backMousePressed
+
+    private void jTravelerSpinnerKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTravelerSpinnerKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTravelerSpinnerKeyPressed
 
     /**
      * @param args the command line arguments
@@ -1053,7 +1168,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jInstruction;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JComboBox<String> jLocationComboBox;
     private javax.swing.JLabel jLocationLabel;
@@ -1076,6 +1190,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel preference_tab;
     private javax.swing.JPanel result_container;
     private javax.swing.JPanel result_panel;
+    private javax.swing.JLabel search_label;
     private javax.swing.JLabel switch_label;
     // End of variables declaration//GEN-END:variables
 }
