@@ -9,7 +9,7 @@ public class DayTourSearchMock implements DayTourSearch {
 
 	@Override
 	public List<DayTour> search(Date departing, Date returning, int num) {
-		In in = new In("DayTourMockData.txt");
+		In in = new In("src/DayTourMockData.txt");
 		String[] array = in.readAllLines();
 		List<DayTour> tours = new ArrayList<>();
 		for(String s : array) {
@@ -33,7 +33,7 @@ public class DayTourSearchMock implements DayTourSearch {
 		DayTourSearchMock mock = new DayTourSearchMock();
 		List<DayTour> list = mock.search(new Date(), new Date(), 1);
 		for(DayTour t : list) {
-			System.out.println(t.getTime());
+			System.out.println("Location: "+t.getLocation());
 		}
 	}
 	

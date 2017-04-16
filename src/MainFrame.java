@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -45,17 +46,20 @@ public class MainFrame extends javax.swing.JFrame {
     private SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
     
     private FlightMockGenerator flightMock;
-    
+    private DayTourSearchMock tourMock;
     public MainFrame() {
         initComponents();
         //adjustFrame();
         
         //airportCodes.txt should be in the same directory as the 'src' folder.
-        flightMock = new FlightMockGenerator("airportCodes.txt");  
+        flightMock = new FlightMockGenerator("src/airportCodes.txt");  
+        tourMock = new DayTourSearchMock();
+
+        
         generateComboboxModel();  
         calendar();
         comboBox();
-        flight_label.setFocusable(true);
+
     }
     
     private void searchFlights() {
@@ -79,6 +83,17 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }
     
+    private void searchDayTours() {
+        try {
+            List<DayTour> dt = tourMock.search(getDepartDate(), getReturnDate(), travelersValue);
+            displayTourResult(dt);
+        } catch (NullPointerException e) {
+            System.out.println("Fill in all inputs");
+        }
+    }
+    
+    
+    
     private void generateComboboxModel() {
         DefaultComboBoxModel dbm = new DefaultComboBoxModel();
         List<Airport> airports = flightMock.getAirports();
@@ -88,6 +103,12 @@ public class MainFrame extends javax.swing.JFrame {
             dbm.addElement(name);
         }
         jDepartureComboBox.setModel(dbm);
+    }
+    private void displayTourResult(List<DayTour> tour){
+        DefaultListModel tourModel= new DefaultListModel();
+        addToListModel(tour, tourModel);
+        tourList.setModel(tourModel);
+        
     }
     
     private void displayFlightResult(List<Flight> inbound_flights, List<Flight> outbound_flights) {
@@ -190,10 +211,10 @@ public class MainFrame extends javax.swing.JFrame {
     
     private void change_preference_tab(JPanel a){
         //Removing old panel
-        preference_container.removeAll();
+        result_container.removeAll();
         //Adding new one
-        preference_container.add(a);
-        preference_container.repaint();
+        result_container.add(a);
+        result_container.repaint();
     }
     
     private void slideScrollBar(JScrollPane spane, int increment) {
@@ -240,6 +261,8 @@ public class MainFrame extends javax.swing.JFrame {
         hotel_label1 = new javax.swing.JLabel();
         day_tour_label1 = new javax.swing.JLabel();
         back_label = new javax.swing.JLabel();
+        priceLabel = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         result_container = new javax.swing.JPanel();
         flight_result = new javax.swing.JPanel();
         outbound_flight = new javax.swing.JLabel();
@@ -256,18 +279,15 @@ public class MainFrame extends javax.swing.JFrame {
         inbound_forward = new javax.swing.JLabel();
         hotel_result = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
+        tour_result = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tourList = new javax.swing.JList<>();
         preference_panel = new javax.swing.JPanel();
         menuBar = new javax.swing.JPanel();
         jExit = new javax.swing.JLabel();
         jInstruction = new javax.swing.JLabel();
         jAbout = new javax.swing.JLabel();
         jContact = new javax.swing.JLabel();
-        preference_tab = new javax.swing.JPanel();
-        flight_label = new javax.swing.JLabel();
-        hotel_label = new javax.swing.JLabel();
-        day_tour_label = new javax.swing.JLabel();
-        search_label = new javax.swing.JLabel();
-        preference_container = new javax.swing.JPanel();
         flight_preference = new javax.swing.JPanel();
         jTitle = new javax.swing.JLabel();
         jDepartureLabel = new javax.swing.JLabel();
@@ -284,10 +304,7 @@ public class MainFrame extends javax.swing.JFrame {
         changeLF("Windows");
         jDepartureComboBox = new javax.swing.JComboBox<>();
         switch_label = new javax.swing.JLabel();
-        jHotelSelect = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jToursSelect = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
+        search_label = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -376,6 +393,14 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        priceLabel.setFont(new java.awt.Font("Segoe UI Light", 1, 24)); // NOI18N
+        priceLabel.setForeground(new java.awt.Color(255, 255, 255));
+        priceLabel.setText("Price:");
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI Light", 0, 24)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("10000 USD");
+
         javax.swing.GroupLayout menuBar1Layout = new javax.swing.GroupLayout(menuBar1);
         menuBar1.setLayout(menuBar1Layout);
         menuBar1Layout.setHorizontalGroup(
@@ -383,13 +408,17 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, menuBar1Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addComponent(back_label)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 287, Short.MAX_VALUE)
+                .addGap(120, 120, 120)
                 .addComponent(flight_label1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(125, 125, 125)
+                .addGap(81, 81, 81)
                 .addComponent(hotel_label1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(101, 101, 101)
+                .addGap(98, 98, 98)
                 .addComponent(day_tour_label1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(121, 121, 121)
+                .addGap(76, 76, 76)
+                .addComponent(priceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
                 .addComponent(jExit1)
                 .addGap(27, 27, 27))
         );
@@ -403,8 +432,10 @@ public class MainFrame extends javax.swing.JFrame {
                         .addComponent(back_label))
                     .addGroup(menuBar1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(flight_label1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(day_tour_label1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(hotel_label1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(day_tour_label1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(priceLabel)
+                        .addComponent(jLabel3))
                     .addComponent(jExit1))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -415,7 +446,7 @@ public class MainFrame extends javax.swing.JFrame {
         result_container.setBackground(new java.awt.Color(255, 255, 255));
         result_container.setLayout(new java.awt.CardLayout());
 
-        flight_result.setBackground(new java.awt.Color(240, 241, 241));
+        flight_result.setBackground(new java.awt.Color(255, 255, 255));
 
         outbound_flight.setFont(new java.awt.Font("Segoe UI Light", 1, 18)); // NOI18N
         outbound_flight.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/departure-13x13-icon.png"))); // NOI18N
@@ -519,7 +550,7 @@ public class MainFrame extends javax.swing.JFrame {
         flight_resultLayout.setVerticalGroup(
             flight_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, flight_resultLayout.createSequentialGroup()
-                .addContainerGap(114, Short.MAX_VALUE)
+                .addContainerGap(112, Short.MAX_VALUE)
                 .addGroup(flight_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, flight_resultLayout.createSequentialGroup()
                         .addGroup(flight_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -563,26 +594,57 @@ public class MainFrame extends javax.swing.JFrame {
 
         result_container.add(flight_result, "card2");
 
-        jLabel5.setText("jLabel5");
+        jLabel5.setText("This is Hotel");
 
         javax.swing.GroupLayout hotel_resultLayout = new javax.swing.GroupLayout(hotel_result);
         hotel_result.setLayout(hotel_resultLayout);
         hotel_resultLayout.setHorizontalGroup(
             hotel_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(hotel_resultLayout.createSequentialGroup()
-                .addGap(51, 51, 51)
+                .addGap(125, 125, 125)
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(979, Short.MAX_VALUE))
+                .addContainerGap(905, Short.MAX_VALUE))
         );
         hotel_resultLayout.setVerticalGroup(
             hotel_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(hotel_resultLayout.createSequentialGroup()
-                .addGap(68, 68, 68)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(125, Short.MAX_VALUE))
+                .addGap(117, 117, 117)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(462, Short.MAX_VALUE))
         );
 
         result_container.add(hotel_result, "card3");
+
+        tour_result.setBackground(new java.awt.Color(255, 255, 255));
+
+        jScrollPane1.setMaximumSize(new java.awt.Dimension(880, 32767));
+
+        tourList.setFont(new java.awt.Font("Segoe UI Light", 0, 24)); // NOI18N
+        tourList.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        tourList.setFixedCellWidth(220);
+        tourList.setLayoutOrientation(javax.swing.JList.HORIZONTAL_WRAP);
+        tourList.setVisibleRowCount(-1);
+        jScrollPane1.setViewportView(tourList);
+        tourList.setCellRenderer(new TourResultRenderer());
+
+        javax.swing.GroupLayout tour_resultLayout = new javax.swing.GroupLayout(tour_result);
+        tour_result.setLayout(tour_resultLayout);
+        tour_resultLayout.setHorizontalGroup(
+            tour_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tour_resultLayout.createSequentialGroup()
+                .addGap(184, 184, 184)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 901, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(130, Short.MAX_VALUE))
+        );
+        tour_resultLayout.setVerticalGroup(
+            tour_resultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tour_resultLayout.createSequentialGroup()
+                .addContainerGap(111, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 506, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(43, 43, 43))
+        );
+
+        result_container.add(tour_result, "card4");
 
         result_panel.add(result_container);
         result_container.setBounds(0, 90, 1215, 645);
@@ -661,114 +723,23 @@ public class MainFrame extends javax.swing.JFrame {
         preference_panel.add(menuBar);
         menuBar.setBounds(0, 0, 1220, 90);
 
-        flight_label.setFont(new java.awt.Font("Segoe UI Light", 1, 24)); // NOI18N
-        flight_label.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/flight-dark-icon.png"))); // NOI18N
-        flight_label.setText("Flight");
-        flight_label.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                flight_labelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                flight_labelMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                flight_labelMousePressed(evt);
-            }
-        });
-
-        hotel_label.setFont(new java.awt.Font("Segoe UI Light", 1, 24)); // NOI18N
-        hotel_label.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/hotel-dark-icon.png"))); // NOI18N
-        hotel_label.setText("Hotel");
-        hotel_label.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                hotel_labelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                hotel_labelMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                hotel_labelMousePressed(evt);
-            }
-        });
-
-        day_tour_label.setFont(new java.awt.Font("Segoe UI Light", 1, 24)); // NOI18N
-        day_tour_label.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/day-tour-dark-icon.png"))); // NOI18N
-        day_tour_label.setText("Day Tours");
-        day_tour_label.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                day_tour_labelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                day_tour_labelMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                day_tour_labelMousePressed(evt);
-            }
-        });
-
-        search_label.setFont(new java.awt.Font("Segoe UI Light", 1, 24)); // NOI18N
-        search_label.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search-icon.png"))); // NOI18N
-        search_label.setText("Search  ");
-        search_label.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 1, 0, new java.awt.Color(0, 0, 0)));
-        search_label.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        search_label.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                search_labelMouseReleased(evt);
-            }
-        });
-
-        javax.swing.GroupLayout preference_tabLayout = new javax.swing.GroupLayout(preference_tab);
-        preference_tab.setLayout(preference_tabLayout);
-        preference_tabLayout.setHorizontalGroup(
-            preference_tabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(preference_tabLayout.createSequentialGroup()
-                .addGap(65, 65, 65)
-                .addGroup(preference_tabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(search_label, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(day_tour_label, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(hotel_label, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(flight_label, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(25, Short.MAX_VALUE))
-        );
-        preference_tabLayout.setVerticalGroup(
-            preference_tabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(preference_tabLayout.createSequentialGroup()
-                .addGap(74, 74, 74)
-                .addComponent(flight_label, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(46, 46, 46)
-                .addComponent(hotel_label, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(54, 54, 54)
-                .addComponent(day_tour_label, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 132, Short.MAX_VALUE)
-                .addComponent(search_label, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(86, 86, 86))
-        );
-
-        search_label.setHorizontalTextPosition(SwingConstants.LEFT);
-
-        preference_panel.add(preference_tab);
-        preference_tab.setBounds(0, 90, 260, 643);
-
-        preference_container.setBackground(new java.awt.Color(255, 255, 255));
-        preference_container.setLayout(new java.awt.CardLayout());
-
         flight_preference.setBackground(new java.awt.Color(255, 255, 255));
 
-        jTitle.setFont(new java.awt.Font("Segoe UI Semibold", 1, 30)); // NOI18N
-        jTitle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/flight-dark-20x20-icon.png"))); // NOI18N
-        jTitle.setText("Book your flight   ");
+        jTitle.setFont(new java.awt.Font("Segoe UI Semibold", 1, 35)); // NOI18N
+        jTitle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Snowflake_48px.png"))); // NOI18N
+        jTitle.setText("Book your trip  ");
 
-        jDepartureLabel.setFont(new java.awt.Font("Segoe UI Light", 1, 22)); // NOI18N
+        jDepartureLabel.setFont(new java.awt.Font("Segoe UI Light", 1, 30)); // NOI18N
         jDepartureLabel.setText("From");
 
-        jLocationLabel.setFont(new java.awt.Font("Segoe UI Light", 1, 22)); // NOI18N
+        jLocationLabel.setFont(new java.awt.Font("Segoe UI Light", 1, 30)); // NOI18N
         jLocationLabel.setText("To");
 
-        jTravelerLabel.setFont(new java.awt.Font("Segoe UI Light", 1, 22)); // NOI18N
-        jTravelerLabel.setText("Traveler");
+        jTravelerLabel.setFont(new java.awt.Font("Segoe UI Light", 1, 30)); // NOI18N
+        jTravelerLabel.setText("Travelers");
 
-        jTravelerSpinner.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-        jTravelerSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        jTravelerSpinner.setFont(new java.awt.Font("Segoe UI Light", 0, 24)); // NOI18N
+        jTravelerSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, null, 1));
         changeLF("Nimbus");
         jTravelerSpinner.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -776,10 +747,10 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        jDepartingLabel.setFont(new java.awt.Font("Segoe UI Light", 0, 18)); // NOI18N
+        jDepartingLabel.setFont(new java.awt.Font("Segoe UI Light", 0, 24)); // NOI18N
         jDepartingLabel.setText("Departing");
 
-        jReturningLabel.setFont(new java.awt.Font("Segoe UI Light", 0, 18)); // NOI18N
+        jReturningLabel.setFont(new java.awt.Font("Segoe UI Light", 0, 24)); // NOI18N
         jReturningLabel.setText("Returning");
 
         jDepartingCalendar.setBackground(new java.awt.Color(255, 255, 255));
@@ -801,7 +772,7 @@ public class MainFrame extends javax.swing.JFrame {
         jReturningCalendar.setLayout(jReturningCalendarLayout);
         jReturningCalendarLayout.setHorizontalGroup(
             jReturningCalendarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 156, Short.MAX_VALUE)
         );
         jReturningCalendarLayout.setVerticalGroup(
             jReturningCalendarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -809,18 +780,29 @@ public class MainFrame extends javax.swing.JFrame {
         );
 
         jLocationComboBox.setEditable(true);
-        jLocationComboBox.setFont(new java.awt.Font("Segoe UI Light", 0, 18)); // NOI18N
+        jLocationComboBox.setFont(new java.awt.Font("Segoe UI Light", 0, 24)); // NOI18N
         jLocationComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Keflavik International Airport (KEF), Iceland" }));
         jLocationComboBox.setBorder(null);
 
         jDepartureComboBox.setEditable(true);
-        jDepartureComboBox.setFont(new java.awt.Font("Segoe UI Light", 0, 18)); // NOI18N
+        jDepartureComboBox.setFont(new java.awt.Font("Segoe UI Light", 0, 24)); // NOI18N
         jDepartureComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Bahamas, The", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burma", "Burundi", "Cambodia", "Cameroon", "Canada", "Cabo Verde", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo, Democratic Republic of the", "Congo, Republic of the", "Costa Rica", "Cote d'Ivoire", "Croatia", "Cuba", "Curacao", "Cyprus", "Czechia" }));
         jDepartureComboBox.setSelectedIndex(-1);
         jDepartureComboBox.setBorder(null);
 
         switch_label.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/switch-icon.png"))); // NOI18N
         switch_label.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        search_label.setFont(new java.awt.Font("Segoe UI Light", 1, 35)); // NOI18N
+        search_label.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search-icon.png"))); // NOI18N
+        search_label.setText("Search  ");
+        search_label.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 1, 0, new java.awt.Color(0, 0, 0)));
+        search_label.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        search_label.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                search_labelMouseReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout flight_preferenceLayout = new javax.swing.GroupLayout(flight_preference);
         flight_preference.setLayout(flight_preferenceLayout);
@@ -831,60 +813,69 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(flight_preferenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(flight_preferenceLayout.createSequentialGroup()
                         .addGroup(flight_preferenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jDepartureLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTitle))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jDepartureComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jDepartingLabel)
+                            .addComponent(jDepartingCalendar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(flight_preferenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jReturningCalendar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jReturningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(flight_preferenceLayout.createSequentialGroup()
+                                .addGap(34, 34, 34)
+                                .addComponent(switch_label, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(46, 46, 46)
+                                .addGroup(flight_preferenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLocationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(flight_preferenceLayout.createSequentialGroup()
+                                        .addComponent(jLocationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(66, 66, 66)
+                                        .addComponent(jTravelerSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addContainerGap(185, Short.MAX_VALUE))
                     .addGroup(flight_preferenceLayout.createSequentialGroup()
-                        .addGroup(flight_preferenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(flight_preferenceLayout.createSequentialGroup()
-                                .addComponent(jDepartingLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jDepartingCalendar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jDepartureComboBox, 0, 0, Short.MAX_VALUE))
-                        .addGap(36, 36, 36)
-                        .addComponent(switch_label, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(28, 28, 28)
-                        .addGroup(flight_preferenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, flight_preferenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLocationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLocationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(flight_preferenceLayout.createSequentialGroup()
-                                .addComponent(jReturningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jReturningCalendar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 92, Short.MAX_VALUE)
-                        .addGroup(flight_preferenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(flight_preferenceLayout.createSequentialGroup()
-                                .addComponent(jTravelerSpinner)
-                                .addGap(28, 28, 28))
-                            .addComponent(jTravelerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(74, 74, 74))))
+                        .addComponent(jTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(flight_preferenceLayout.createSequentialGroup()
+                        .addComponent(jDepartureLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jTravelerLabel)
+                        .addGap(164, 164, 164))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, flight_preferenceLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(search_label)
+                .addGap(151, 151, 151))
         );
         flight_preferenceLayout.setVerticalGroup(
             flight_preferenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(flight_preferenceLayout.createSequentialGroup()
-                .addGap(75, 75, 75)
+                .addGap(66, 66, 66)
                 .addComponent(jTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(49, 49, 49)
+                .addGap(28, 28, 28)
                 .addGroup(flight_preferenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLocationLabel)
                     .addComponent(jDepartureLabel)
+                    .addComponent(jLocationLabel)
                     .addComponent(jTravelerLabel))
-                .addGap(18, 18, 18)
+                .addGap(21, 21, 21)
                 .addGroup(flight_preferenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jDepartureComboBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
-                    .addComponent(jTravelerSpinner)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, flight_preferenceLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(switch_label, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLocationComboBox, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(110, 110, 110)
-                .addGroup(flight_preferenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jDepartingCalendar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jReturningCalendar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jReturningLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jDepartingLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(128, 128, 128))
+                    .addGroup(flight_preferenceLayout.createSequentialGroup()
+                        .addGroup(flight_preferenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(flight_preferenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLocationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jTravelerSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jDepartureComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                        .addGroup(flight_preferenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jDepartingLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jReturningLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(flight_preferenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jReturningCalendar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jDepartingCalendar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(122, 122, 122)
+                        .addComponent(search_label, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(73, 73, 73))
+                    .addGroup(flight_preferenceLayout.createSequentialGroup()
+                        .addComponent(switch_label, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         jTitle.setHorizontalTextPosition(SwingConstants.LEFT);
@@ -900,59 +891,10 @@ public class MainFrame extends javax.swing.JFrame {
         });
         changeLF("Nimbus");
         changeLF("Nimbus");
+        search_label.setHorizontalTextPosition(SwingConstants.LEFT);
 
-        preference_container.add(flight_preference, "card2");
-
-        jHotelSelect.setBackground(new java.awt.Color(255, 255, 255));
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI Light", 0, 18)); // NOI18N
-        jLabel2.setText("Hotel design something here....");
-
-        javax.swing.GroupLayout jHotelSelectLayout = new javax.swing.GroupLayout(jHotelSelect);
-        jHotelSelect.setLayout(jHotelSelectLayout);
-        jHotelSelectLayout.setHorizontalGroup(
-            jHotelSelectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jHotelSelectLayout.createSequentialGroup()
-                .addGap(81, 81, 81)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(478, Short.MAX_VALUE))
-        );
-        jHotelSelectLayout.setVerticalGroup(
-            jHotelSelectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jHotelSelectLayout.createSequentialGroup()
-                .addGap(47, 47, 47)
-                .addComponent(jLabel2)
-                .addContainerGap(478, Short.MAX_VALUE))
-        );
-
-        preference_container.add(jHotelSelect, "card3");
-
-        jToursSelect.setBackground(new java.awt.Color(255, 255, 255));
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI Light", 0, 18)); // NOI18N
-        jLabel3.setText("Tours design something here....");
-
-        javax.swing.GroupLayout jToursSelectLayout = new javax.swing.GroupLayout(jToursSelect);
-        jToursSelect.setLayout(jToursSelectLayout);
-        jToursSelectLayout.setHorizontalGroup(
-            jToursSelectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jToursSelectLayout.createSequentialGroup()
-                .addGap(151, 151, 151)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(551, Short.MAX_VALUE))
-        );
-        jToursSelectLayout.setVerticalGroup(
-            jToursSelectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jToursSelectLayout.createSequentialGroup()
-                .addGap(87, 87, 87)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(369, Short.MAX_VALUE))
-        );
-
-        preference_container.add(jToursSelect, "card4");
-
-        preference_panel.add(preference_container);
-        preference_container.setBounds(260, 91, 950, 550);
+        preference_panel.add(flight_preference);
+        flight_preference.setBounds(0, 90, 1210, 640);
 
         container.add(preference_panel);
         preference_panel.setBounds(1, 1, 1213, 733);
@@ -987,42 +929,6 @@ public class MainFrame extends javax.swing.JFrame {
         yMouse= evt.getY();
     }//GEN-LAST:event_menuBarMousePressed
 
-    private void flight_labelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_flight_labelMouseEntered
-        flight_label.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
-    }//GEN-LAST:event_flight_labelMouseEntered
-
-    private void flight_labelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_flight_labelMouseExited
-        flight_label.setBorder(BorderFactory.createEmptyBorder());
-    }//GEN-LAST:event_flight_labelMouseExited
-
-    private void hotel_labelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hotel_labelMouseEntered
-        hotel_label.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
-    }//GEN-LAST:event_hotel_labelMouseEntered
-
-    private void hotel_labelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hotel_labelMouseExited
-        hotel_label.setBorder(BorderFactory.createEmptyBorder());
-    }//GEN-LAST:event_hotel_labelMouseExited
-
-    private void day_tour_labelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_day_tour_labelMouseEntered
-        day_tour_label.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
-    }//GEN-LAST:event_day_tour_labelMouseEntered
-
-    private void day_tour_labelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_day_tour_labelMouseExited
-        day_tour_label.setBorder(BorderFactory.createEmptyBorder());
-    }//GEN-LAST:event_day_tour_labelMouseExited
-
-    private void flight_labelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_flight_labelMousePressed
-        change_preference_tab(flight_preference);
-    }//GEN-LAST:event_flight_labelMousePressed
-
-    private void hotel_labelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hotel_labelMousePressed
-        change_preference_tab(jHotelSelect);
-    }//GEN-LAST:event_hotel_labelMousePressed
-
-    private void day_tour_labelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_day_tour_labelMousePressed
-        change_preference_tab(jToursSelect);
-    }//GEN-LAST:event_day_tour_labelMousePressed
-
     private void jExit1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jExit1MouseClicked
         System.exit(0);
     }//GEN-LAST:event_jExit1MouseClicked
@@ -1043,39 +949,40 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_flight_label1MouseEntered
 
     private void flight_label1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_flight_label1MouseExited
-        hotel_label1.setBorder(BorderFactory.createEmptyBorder());
+        flight_label1.setBorder(BorderFactory.createEmptyBorder());
     }//GEN-LAST:event_flight_label1MouseExited
 
     private void flight_label1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_flight_label1MousePressed
-        
+        change_preference_tab(flight_result);
     }//GEN-LAST:event_flight_label1MousePressed
 
     private void hotel_label1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hotel_label1MouseEntered
-        // TODO add your handling code here:
+        hotel_label1.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(250,250,250)));
     }//GEN-LAST:event_hotel_label1MouseEntered
 
     private void hotel_label1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hotel_label1MouseExited
-        // TODO add your handling code here:
+        hotel_label1.setBorder(BorderFactory.createEmptyBorder());
     }//GEN-LAST:event_hotel_label1MouseExited
 
     private void hotel_label1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hotel_label1MousePressed
-        // TODO add your handling code here:
+        change_preference_tab(hotel_result);
     }//GEN-LAST:event_hotel_label1MousePressed
 
     private void day_tour_label1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_day_tour_label1MouseEntered
-        // TODO add your handling code here:
+        day_tour_label1.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(250,250,250)));
     }//GEN-LAST:event_day_tour_label1MouseEntered
 
     private void day_tour_label1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_day_tour_label1MouseExited
-        // TODO add your handling code here:
+        day_tour_label1.setBorder(BorderFactory.createEmptyBorder());
     }//GEN-LAST:event_day_tour_label1MouseExited
 
     private void day_tour_label1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_day_tour_label1MousePressed
-        // TODO add your handling code here:
+        change_preference_tab(tour_result);
     }//GEN-LAST:event_day_tour_label1MousePressed
 
     private void search_labelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_search_labelMouseReleased
         searchFlights();
+        searchDayTours();
     }//GEN-LAST:event_search_labelMouseReleased
 
     private void back_labelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_back_labelMouseReleased
@@ -1141,13 +1048,10 @@ public class MainFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel back_label;
     private javax.swing.JPanel container;
-    private javax.swing.JLabel day_tour_label;
     private javax.swing.JLabel day_tour_label1;
-    private javax.swing.JLabel flight_label;
     private javax.swing.JLabel flight_label1;
     private javax.swing.JPanel flight_preference;
     private javax.swing.JPanel flight_result;
-    private javax.swing.JLabel hotel_label;
     private javax.swing.JLabel hotel_label1;
     private javax.swing.JPanel hotel_result;
     private javax.swing.JLabel inbound_back;
@@ -1164,17 +1068,15 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jDepartureLabel;
     private javax.swing.JLabel jExit;
     private javax.swing.JLabel jExit1;
-    private javax.swing.JPanel jHotelSelect;
     private javax.swing.JLabel jInstruction;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JComboBox<String> jLocationComboBox;
     private javax.swing.JLabel jLocationLabel;
     private javax.swing.JPanel jReturningCalendar;
     private javax.swing.JLabel jReturningLabel;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel jTitle;
-    private javax.swing.JPanel jToursSelect;
     private javax.swing.JLabel jTravelerLabel;
     private javax.swing.JSpinner jTravelerSpinner;
     private javax.swing.JPanel menuBar;
@@ -1185,12 +1087,13 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JList<String> outbound_list;
     private javax.swing.JScrollPane outbound_scrollpane;
     private javax.swing.JLabel outbound_title;
-    private javax.swing.JPanel preference_container;
     private javax.swing.JPanel preference_panel;
-    private javax.swing.JPanel preference_tab;
+    private javax.swing.JLabel priceLabel;
     private javax.swing.JPanel result_container;
     private javax.swing.JPanel result_panel;
     private javax.swing.JLabel search_label;
     private javax.swing.JLabel switch_label;
+    private javax.swing.JList<String> tourList;
+    private javax.swing.JPanel tour_result;
     // End of variables declaration//GEN-END:variables
 }
