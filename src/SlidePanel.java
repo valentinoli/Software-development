@@ -20,7 +20,7 @@ public class SlidePanel {
         timer = new Timer();
     }
 
-    public void slideRight(int stop, int delay, int increment, JPanel jPanel) {
+    public void slideRight(final int stop, int delay, final int increment, final JPanel jPanel) {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -34,7 +34,7 @@ public class SlidePanel {
         }, 0, delay);
     }
     
-    public void slideLeft(int stop, int delay, int increment, JPanel jPanel) {
+    public void slideLeft(final int stop, int delay, final int increment, final JPanel jPanel) {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {

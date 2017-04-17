@@ -29,6 +29,9 @@ import javax.swing.text.DefaultFormatter;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+import flight.*;
+import hotel.*;
+import tour.*;
 
 public class MainFrame extends javax.swing.JFrame {
 
@@ -41,62 +44,60 @@ public class MainFrame extends javax.swing.JFrame {
     private JDatePickerImpl departPicker;
     private int xMouse;
     private int yMouse;
-    private int travelersValue;
     
     private SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
     
-    private FlightMockGenerator flightMock;
-    private DayTourSearchMock tourMock;
+    private PackageManager manager;
+    
     public MainFrame() {
         initComponents();
-        //adjustFrame();
-        
-        //airportCodes.txt should be in the same directory as the 'src' folder.
-        flightMock = new FlightMockGenerator("src/airportCodes.txt");  
-        tourMock = new DayTourSearchMock();
-
-        
+        manager = new PackageManager(new FlightGenerator("src/airportCodes.txt"), new HotelManager(true), new DayTourSearchMock(), null, new ReservationManager(), null);
         generateComboboxModel();  
         calendar();
         comboBox();
-
     }
     
     private void searchFlights() {
-        Date departure_date = null;
-        Date arrival_date = null;
         String origin = "";
         String destination = "";
         try {
-            departure_date = getDepartDate();
-            arrival_date = getReturnDate();
             origin = (String) jDepartureComboBox.getSelectedItem();
             destination = (String) jLocationComboBox.getSelectedItem();
-            List<Flight> outbound = flightMock.search(departure_date, origin, destination, travelersValue);
-            List<Flight> inbound = flightMock.search(arrival_date, destination, origin, travelersValue);
-            displayFlightResult(inbound, outbound);
-            scrollToDate(inbound_list, arrival_date);
-            scrollToDate(outbound_list, departure_date);
+            List<Flight> outbound = manager.searchFlights(getDepartDate(), origin, destination);
+            List<Flight> inbound = manager.searchFlights(getReturnDate(), destination, origin);
+            displayFlightResults(inbound, outbound);
+            scrollToDate(inbound_list, getReturnDate());
+            scrollToDate(outbound_list, getDepartDate());
             slideLeft();
         } catch (NullPointerException e) {
+        	e.printStackTrace();
             System.out.println("Fill in all inputs");
         }
     }
     
-    private void searchDayTours() {
-        try {
-            List<DayTour> dt = tourMock.search(getDepartDate(), getReturnDate(), travelersValue);
-            displayTourResult(dt);
+    private void searchHotels() {
+    	try {            
+            List<Hotel> hotels = manager.searchHotels(getDepartDate(), getReturnDate());
+            displayHotelResults(hotels);
         } catch (NullPointerException e) {
+        	e.printStackTrace();
             System.out.println("Fill in all inputs");
         }
     }
     
-    
+    private void searchTours() {
+        try {
+            List<DayTour> tours = manager.searchDayTours(getDepartDate(), getReturnDate());
+            displayTourResults(tours);
+        } catch (NullPointerException e) {
+        	e.printStackTrace();
+            System.out.println("Fill in all inputs");
+        }
+    }    
     
     private void generateComboboxModel() {
         DefaultComboBoxModel dbm = new DefaultComboBoxModel();
-        List<Airport> airports = flightMock.getAirports();
+        List<Airport> airports = manager.getFlightGenerator().getAirports();
         Collections.sort(airports);
         for (Airport ap : airports) {
             String name = ap.getName() + " (" + ap.getAirportCode() + "), " + ap.getCountry();
@@ -104,14 +105,8 @@ public class MainFrame extends javax.swing.JFrame {
         }
         jDepartureComboBox.setModel(dbm);
     }
-    private void displayTourResult(List<DayTour> tour){
-        DefaultListModel tourModel= new DefaultListModel();
-        addToListModel(tour, tourModel);
-        tourList.setModel(tourModel);
-        
-    }
     
-    private void displayFlightResult(List<Flight> inbound_flights, List<Flight> outbound_flights) {
+    private void displayFlightResults(List<Flight> inbound_flights, List<Flight> outbound_flights) {
         DefaultListModel inbound = new DefaultListModel();
         DefaultListModel outbound = new DefaultListModel();
         addToListModel(inbound_flights, inbound);
@@ -119,6 +114,19 @@ public class MainFrame extends javax.swing.JFrame {
         setFlightLabel();
         inbound_list.setModel(inbound);
         outbound_list.setModel(outbound);
+    }
+    
+    private void displayHotelResults(List<Hotel> hotels) {
+    	DefaultListModel hotelModel = new DefaultListModel();
+        addToListModel(hotels, hotelModel);
+        // missing view-variable hotelList
+        // hotelList.setModel(hotelModel); 
+    }
+    
+    private void displayTourResults(List<DayTour> tours) {
+    	DefaultListModel tourModel = new DefaultListModel();
+        addToListModel(tours, tourModel);
+        tourList.setModel(tourModel);
     }
     
     private void setFlightLabel() {
@@ -168,8 +176,7 @@ public class MainFrame extends javax.swing.JFrame {
         departPicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
         JDatePanelImpl datePanel2 = new JDatePanelImpl(model2, p);
         returnPicker = new JDatePickerImpl(datePanel2, new DateLabelFormatter());
-               
-    
+
         departPicker.setBounds(0,0,150,40);
         returnPicker.setBounds(0,0,150,40);
         jDepartingCalendar.add(departPicker);
@@ -241,7 +248,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     private void setTravelersValue(int n) {
-        this.travelersValue = n;
+        manager.getPackage().setTravellers(n);
     }
 
     /**
@@ -450,7 +457,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         outbound_flight.setFont(new java.awt.Font("Segoe UI Light", 1, 18)); // NOI18N
         outbound_flight.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/departure-13x13-icon.png"))); // NOI18N
-        outbound_flight.setText("KeflavÃ­k (KEF)  to London (LHR)");
+        outbound_flight.setText("Keflavík (KEF)  to London (LHR)");
 
         inbound_title.setFont(new java.awt.Font("Segoe UI Light", 1, 18)); // NOI18N
         inbound_title.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/arrival-icon.png"))); // NOI18N
@@ -502,7 +509,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         inbound_flight.setFont(new java.awt.Font("Segoe UI Light", 1, 18)); // NOI18N
         inbound_flight.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/departure-13x13-icon.png"))); // NOI18N
-        inbound_flight.setText("KeflavÃ­k (KEF)  to London (LHR)");
+        inbound_flight.setText("Keflavík (KEF)  to London (LHR)");
 
         inbound_forward.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/arrow-right-black.png"))); // NOI18N
         inbound_forward.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -981,8 +988,9 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_day_tour_label1MousePressed
 
     private void search_labelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_search_labelMouseReleased
-        searchFlights();
-        searchDayTours();
+    	searchFlights();
+        searchHotels();
+        searchTours();
     }//GEN-LAST:event_search_labelMouseReleased
 
     private void back_labelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_back_labelMouseReleased

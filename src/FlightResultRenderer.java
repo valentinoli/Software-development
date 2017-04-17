@@ -8,6 +8,8 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
+import flight.Flight;
+
 public class FlightResultRenderer extends FlightResult implements ListCellRenderer {
     
  

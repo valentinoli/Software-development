@@ -1,5 +1,10 @@
 package src;
 import java.util.Vector;
+import hotel.*;
+import tour.DayTour;
+import flight.*;
+
+import flight.Flight;
 
 public class TravelPackage {
 	
@@ -45,7 +50,7 @@ public class TravelPackage {
 	public int calculatePrice() {
 		
 		price =  outbound.getPrice() + inbound.getPrice();
-		price += hotel.getPrice();
+		// price += hotel.getPrice();
 		
 		for(int i = 0; i < tours.size(); i++) {
 			price += tours.get(i).getPrice();
